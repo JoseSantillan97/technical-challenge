@@ -2,7 +2,6 @@
 import { useState, useMemo, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter, Routes, Route, Switch } from 'react-router-dom';
 
 export default function UsernameForm() {
   const { pending, data } = useFormStatus();
@@ -12,6 +11,8 @@ export default function UsernameForm() {
   const submittedPassword = useRef(null);
   const timeoutId = useRef(null);
   const navigate = useNavigate()
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   useMemo(() => {
     if (pending) {
@@ -21,6 +22,16 @@ export default function UsernameForm() {
       submittedPassword.current = data.get('password')
       if (data.get('username') === 'azteca' && data.get('password') === '12345') {
         navigate('/dashboard')
+      }
+      else {
+        if (data.get('password') !== '12345') {
+          setLoginAttempts((prevAttempts) => prevAttempts + 1);
+        }
+
+        if (loginAttempts >= 3) {
+          setIsButtonDisabled(true);
+          console.log('contraseña incorrecta')
+        }
       }
       if (timeoutId.current != null) {
         clearTimeout(timeoutId.current);
@@ -33,7 +44,6 @@ export default function UsernameForm() {
       setShowSubmitted(true);
     }
   }, [pending, data, navigate]);
-  console.log('soy navigation', navigation)
 
   return (
     <section className='loginform'>
@@ -49,20 +59,21 @@ export default function UsernameForm() {
         {
           submittedUsername.current !== 'azteca'
           && submittedUsername.current !== null
-          && <p>El usuario es incorrecto</p>
+          && <p className='loginform-sec3-wrong'>El usuario es incorrecto</p>
         }
         <input type="password" name="password" placeholder='Contraseña' id="" />
         {
           submittedPassword.current !== '12345'
           && submittedPassword.current !== null
-          && <p>Contraseña incorrecta</p>
+          && <p className='loginform-sec3-wrong'>Contraseña incorrecta</p>
         }
-        <button type="submit" disabled={pending}>
+        {
+          isButtonDisabled && <p className='loginform-sec3-attemps'>Haz alcanzado el limite de intentos.</p>
+        }
+        <button type="submit" disabled={pending || isButtonDisabled}>
           {pending ? 'Comprobando' : 'Iniciar sesión'}
         </button>
       </div>
-
-
     </section>
   );
 }
