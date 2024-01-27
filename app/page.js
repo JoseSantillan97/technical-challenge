@@ -3,7 +3,7 @@ import styles from './../styles/style.scss'
 import { submitForm } from "./../components/actions.js";
 import { BrowserRouter, Routes, Route, Switch } from 'react-router-dom';
 import Dashboard from '../pages/dashboard';
-import UsernameForm from './../components/FormLogin';
+import FormLogin from './../components/FormLogin';
 
 export default function App() {
   return (
@@ -13,7 +13,7 @@ export default function App() {
           <Routes>
             <Route path='/dashboard' element={<Dashboard />} exact >
             </Route>
-            <Route path='/' element={<UsernameForm />} exact >
+            <Route path='/' element={<FormLogin />} exact >
             </Route>
           </Routes>
         </BrowserRouter>
